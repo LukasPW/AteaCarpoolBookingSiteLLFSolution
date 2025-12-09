@@ -45,6 +45,10 @@ function checkDatesAndShowCars() {
         return false;
     }
     
+    // Save dates to sessionStorage
+    sessionStorage.setItem('selectedStartDate', startTime.value);
+    sessionStorage.setItem('selectedEndDate', endTime.value);
+    
     // Show filters panel when both dates are valid
     filtersPanel.style.display = 'block';
     populateFilterOptions();
@@ -359,4 +363,14 @@ document.getElementById('endTime').addEventListener('change', checkDatesAndShowC
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     loadCars();
+    
+    // Restore dates from sessionStorage if they exist
+    const savedStartDate = sessionStorage.getItem('selectedStartDate');
+    const savedEndDate = sessionStorage.getItem('selectedEndDate');
+    
+    if (savedStartDate && savedEndDate) {
+        document.getElementById('startTime').value = savedStartDate;
+        document.getElementById('endTime').value = savedEndDate;
+        checkDatesAndShowCars();
+    }
 });
