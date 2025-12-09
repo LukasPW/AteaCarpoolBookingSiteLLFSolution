@@ -5,38 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
+        /* Reset default browser styles */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* Center the login form on the page */
         body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f5f5f5; }
+        
+        /* Login container styling */
         .login-container { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        
+        /* Title styling */
         h1 { margin-bottom: 1.5rem; text-align: center; color: #333; }
+        
+        /* Form group spacing */
         .form-group { margin-bottom: 1rem; }
+        
+        /* Label styling */
         label { display: block; margin-bottom: 0.5rem; color: #555; }
+        
+        /* Input field styling */
         input { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
+        
+        /* Input focus state */
         input:focus { outline: none; border-color: #007bff; }
+        
+        /* Button styling */
         button { width: 100%; padding: 0.75rem; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; }
+        
+        /* Button hover effect */
         button:hover { background: #0056b3; }
     </style>
 </head>
 <body>
+    <img src="atea"  style="width:300px;height:300px; justify-content: center; position: fixed;">
+    <!-- Main login container -->
     <div class="login-container">
         <h1>Login</h1>
+        
+        <!-- Login form -->
         <form id="loginForm">
+            <!-- Email input field -->
             <div class="form-group">
                 <label for="email">Email</label>
-                <placeholder Email></placeholder>
                 <input type="email" id="email" placeholder="Enter your email" required>
             </div>
+            
+            <!-- Password input field -->
             <div class="form-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" placeholder="Enter your password" required>
             </div>
+            
+            <!-- Submit button -->
             <button type="submit">Login</button>
         </form>
     </div>
+    
+    <!-- JavaScript for form handling -->
     <script>
+        // Handle form submission
         document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Login submitted');
+            e.preventDefault(); // Prevent page reload
+            alert('Login submitted'); // Show alert on submit
         });
     </script>
 </body>
