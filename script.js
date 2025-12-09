@@ -7,6 +7,18 @@ async function loadCars() {
         const response = await fetch('cars.json');
         carsData = await response.json();
         
+        // Sort cars: available first (alphabetically), then unavailable (alphabetically)
+        carsData.sort((a, b) => {
+            // Available cars come first
+            if (a.available !== b.available) {
+                return b.available - a.available;
+            }
+            // Within same availability, sort by brand then model
+            const brandCompare = a.make.localeCompare(b.make);
+            if (brandCompare !== 0) return brandCompare;
+            return a.model.localeCompare(b.model);
+        });
+        
         // Populate filter options based on available data
         populateFilterOptions();
         
@@ -158,6 +170,18 @@ function applyFilters() {
         if (fuelFilter.length > 0 && !fuelFilter.includes(car.fuel_type)) return false;
         
         return true;
+    });
+
+    // Sort filtered cars: available first (alphabetically), then unavailable (alphabetically)
+    filtered.sort((a, b) => {
+        // Available cars come first
+        if (a.available !== b.available) {
+            return b.available - a.available;
+        }
+        // Within same availability, sort by brand then model
+        const brandCompare = a.make.localeCompare(b.make);
+        if (brandCompare !== 0) return brandCompare;
+        return a.model.localeCompare(b.model);
     });
 
     // Update select display text
