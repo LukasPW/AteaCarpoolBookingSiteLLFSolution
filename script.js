@@ -75,13 +75,19 @@ function renderCars(cars = carsData) {
         carCard.className = `car-card ${car.available ? 'available' : 'unavailable'}`;
         
         // Get fuel type icon
-        const fuelIcon = car.fuel_type === 'Electric' ? 'public/ElectricCar.png' : 'public/GasolineCar.png';
+        const fuelIcons = {
+            'Electric': 'public/ElectricCar.png',
+            'Hybrid': 'public/HybridCar.png',
+            'Gasoline': 'public/GasolineCar.png',
+            'Diesel': 'public/GasolineCar.png'
+        };
         const fuelMap = {
             'Electric': 'E',
-            'Gasoline': 'G',
             'Hybrid': 'H',
+            'Gasoline': 'G',
             'Diesel': 'D'
         };
+        const fuelIcon = fuelIcons[car.fuel_type] || 'public/GasolineCar.png';
         const fuelCode = fuelMap[car.fuel_type] || car.fuel_type.charAt(0);
         
         carCard.innerHTML = `
