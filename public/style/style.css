@@ -309,7 +309,6 @@ body {
     display: flex;
     align-items: baseline;
     gap: 10px;
-    margin-bottom: 10px;
 }
 
 .car-brand {
@@ -327,6 +326,12 @@ body {
 .car-plate {
     font-size: 13px;
     color: var(--text-light);
+}
+
+.car-year {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-bottom: 8px;
 }
 
 .car-specs {

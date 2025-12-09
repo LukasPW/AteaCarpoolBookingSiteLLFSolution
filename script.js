@@ -113,6 +113,7 @@ function renderCars(cars = carsData) {
                         <span class="car-model">${car.model}</span>
                         <span class="car-plate">| ${car.license_plate}</span>
                     </div>
+                    <div class="car-year">${car.year}</div>
                     <div class="car-specs">
                         <span class="car-spec">
                             <img src="public/CarSeat.png" alt="Seats" class="car-spec-icon">
