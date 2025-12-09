@@ -361,7 +361,7 @@ body {
 .car-header {
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    gap: 4px;
 }
 
 .car-brand {
