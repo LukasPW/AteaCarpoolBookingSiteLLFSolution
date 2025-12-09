@@ -62,12 +62,8 @@ body {
 .user-avatar {
     width: 40px;
     height: 40px;
-    background-color: var(--light-gray);
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
+    object-fit: cover;
     cursor: pointer;
 }
 
@@ -120,6 +116,61 @@ body {
     cursor: pointer;
 }
 
+/* Multi-select styling */
+.multi-select-wrapper {
+    position: relative;
+}
+
+.multi-select {
+    width: 100%;
+}
+
+.multi-select-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+    margin-top: 4px;
+    padding: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.multi-select-dropdown.show {
+    display: block;
+}
+
+.multi-select-dropdown label {
+    display: block;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    font-weight: normal;
+    font-size: 13px;
+}
+
+.multi-select-dropdown label:hover {
+    background-color: var(--light-gray);
+}
+
+.multi-select-dropdown input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+    width: auto;
+    padding: 0;
+}
+
+.multi-select-dropdown input[type="checkbox"]:checked + * {
+    font-weight: 600;
+}
+
 .filter-group select option[value=""] {
     color: var(--text-light);
 }
@@ -165,6 +216,27 @@ body {
 }
 
 .filter-button:active {
+    transform: translateY(1px);
+}
+
+.filter-button-secondary {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #008A01;
+    border-radius: 6px;
+    background-color: #fff;
+    color: #008A01;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+    margin-top: 10px;
+}
+
+.filter-button-secondary:hover {
+    background-color: #f5f5f5;
+}
+
+.filter-button-secondary:active {
     transform: translateY(1px);
 }
 
@@ -216,6 +288,13 @@ body {
     flex-shrink: 0;
     font-size: 12px;
     color: var(--text-light);
+    overflow: hidden;
+}
+
+.car-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .car-info {
@@ -264,7 +343,9 @@ body {
 }
 
 .car-spec-icon {
-    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
 }
 
 .car-status {

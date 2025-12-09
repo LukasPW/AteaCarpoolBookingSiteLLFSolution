@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="public/style/style.css">
     <title>CarBook - Carpool Booking</title>
 </head>
 <body>
@@ -13,7 +13,7 @@
         </div>
         <div class="header-right">
             <span class="user-name">Tommy Askey</span>
-            <div class="user-avatar">👤</div>
+            <img src="public/UserIcon.png" alt="User" class="user-avatar">
         </div>
     </header>
 
@@ -24,53 +24,75 @@
             
             <div class="filter-group">
                 <label>Brands</label>
-                <select required>
-                    <option value="" disabled selected>Select</option>
-                    <option>Tesla</option>
-                    <option>Toyota</option>
-                    <option>Ford</option>
-                </select>
+                <div class="multi-select-wrapper">
+                    <select id="brandFilter" class="multi-select">
+                        <option value="" disabled selected>Select brands...</option>
+                    </select>
+                    <div class="multi-select-dropdown" id="brandDropdown">
+                        <label><input type="checkbox" value="Tesla"> Tesla</label>
+                        <label><input type="checkbox" value="Toyota"> Toyota</label>
+                        <label><input type="checkbox" value="Ford"> Ford</label>
+                        <label><input type="checkbox" value="BMW"> BMW</label>
+                        <label><input type="checkbox" value="Mercedes"> Mercedes</label>
+                        <label><input type="checkbox" value="Audi"> Audi</label>
+                    </div>
+                </div>
             </div>
 
             <div class="filter-group">
                 <label>Year</label>
-                <select required>
-                    <option value="" disabled selected>Select</option>
-                    <option>2024</option>
-                    <option>2023</option>
-                    <option>2022</option>
-                </select>
+                <div class="multi-select-wrapper">
+                    <select id="yearFilter" class="multi-select">
+                        <option value="" disabled selected>Select years...</option>
+                    </select>
+                    <div class="multi-select-dropdown" id="yearDropdown">
+                        <label><input type="checkbox" value="2024"> 2024</label>
+                        <label><input type="checkbox" value="2023"> 2023</label>
+                        <label><input type="checkbox" value="2022"> 2022</label>
+                    </div>
+                </div>
             </div>
 
             <div class="filter-group">
                 <label>Seats</label>
-                <select required>
-                    <option value="" disabled selected>Select</option>
-                    <option>2</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
+                <div class="multi-select-wrapper">
+                    <select id="seatsFilter" class="multi-select">
+                        <option value="" disabled selected>Select seats...</option>
+                    </select>
+                    <div class="multi-select-dropdown" id="seatsDropdown">
+                        <label><input type="checkbox" value="2"> 2</label>
+                        <label><input type="checkbox" value="4"> 4</label>
+                        <label><input type="checkbox" value="5"> 5</label>
+                        <label><input type="checkbox" value="7"> 7</label>
+                    </div>
+                </div>
             </div>
 
             <div class="filter-group">
                 <label>Fuel Type</label>
-                <select required>
-                    <option value="" disabled selected>Select</option>
-                    <option>Electric</option>
-                    <option>Petrol</option>
-                    <option>Diesel</option>
-                </select>
+                <div class="multi-select-wrapper">
+                    <select id="fuelFilter" class="multi-select">
+                        <option value="" disabled selected>Select fuel types...</option>
+                    </select>
+                    <div class="multi-select-dropdown" id="fuelDropdown">
+                        <label><input type="checkbox" value="E"> Electric</label>
+                        <label><input type="checkbox" value="G"> Petrol</label>
+                        <label><input type="checkbox" value="D"> Diesel</label>
+                    </div>
+                </div>
             </div>
 
             <div class="filter-group">
                 <label>Start</label>
-                <input type="datetime-local" placeholder="Pick time/date">
+                <input type="datetime-local" id="startTime" placeholder="Pick time/date">
             </div>
 
             <div class="filter-group">
                 <label>End</label>
-                <input type="datetime-local" placeholder="Pick time/date">
+                <input type="datetime-local" id="endTime" placeholder="Pick time/date">
             </div>
+
+            <button class="filter-button-secondary" id="clearFilters">Clear Filters</button>
         </aside>
 
         <!-- Main Content -->
