@@ -18,7 +18,6 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background-color: var(--light-gray);
-    padding-top: 10vh;
 }
 
 /* Header */
@@ -67,6 +66,59 @@ body {
     cursor: pointer;
 }
 
+/* Date Selection Section */
+.date-selection-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #27ae60 100%);
+    padding: 40px 20px;
+    margin-top: 10vh;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.date-inputs-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.date-inputs-container h2 {
+    color: white;
+    margin-bottom: 25px;
+    font-size: 24px;
+}
+
+.date-inputs {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.date-group {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.date-group label {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.date-group input {
+    padding: 12px 14px;
+    border: 2px solid white;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+    color: var(--text-dark);
+}
+
+.date-group input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
 /* Container Layout */
 .container {
     display: flex;
@@ -84,6 +136,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     height: fit-content;
+    display: none;
 }
 
 .filters-panel h2 {
@@ -395,5 +448,17 @@ body {
 
     .header {
         padding: 0 20px;
+    }
+
+    .date-inputs {
+        flex-direction: column;
+    }
+
+    .date-group {
+        min-width: 100%;
+    }
+
+    .date-inputs-container h2 {
+        font-size: 20px;
     }
 }

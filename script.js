@@ -1,5 +1,7 @@
 // Global variable to store cars data
 let carsData = [];
+let selectedStartDate = null;
+let selectedEndDate = null;
 
 // Fetch cars from JSON file
 async function loadCars() {
@@ -7,27 +9,47 @@ async function loadCars() {
         const response = await fetch('cars.json');
         carsData = await response.json();
         
-        // Sort cars: available first (alphabetically), then unavailable (alphabetically)
-        carsData.sort((a, b) => {
-            // Available cars come first
-            if (a.available !== b.available) {
-                return b.available - a.available;
-            }
-            // Within same availability, sort by brand then model
-            const brandCompare = a.make.localeCompare(b.make);
-            if (brandCompare !== 0) return brandCompare;
-            return a.model.localeCompare(b.model);
-        });
+        // Check if dates are already set
+        const startTime = document.getElementById('startTime');
+        const endTime = document.getElementById('endTime');
         
-        // Populate filter options based on available data
-        populateFilterOptions();
-        
-        // Initial render
-        renderCars();
+        if (startTime.value && endTime.value) {
+            populateFilterOptions();
+            renderCars();
+        }
     } catch (error) {
         console.error('Error loading cars:', error);
         document.getElementById('carsGrid').innerHTML = '<p style="color: #e74c3c; text-align: center; padding: 40px;">Error loading cars data</p>';
     }
+}
+
+// Check if dates are set and show/hide cars
+function checkDatesAndShowCars() {
+    const startTime = document.getElementById('startTime');
+    const endTime = document.getElementById('endTime');
+    const carsGrid = document.getElementById('carsGrid');
+    const filtersPanel = document.querySelector('.filters-panel');
+    
+    if (!startTime.value || !endTime.value) {
+        carsGrid.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">Please select start and end dates to see available cars</p>';
+        filtersPanel.style.display = 'none';
+        return false;
+    }
+    
+    selectedStartDate = new Date(startTime.value);
+    selectedEndDate = new Date(endTime.value);
+    
+    if (selectedStartDate >= selectedEndDate) {
+        carsGrid.innerHTML = '<p style="color: #e74c3c; text-align: center; padding: 40px;">End date must be after start date</p>';
+        filtersPanel.style.display = 'none';
+        return false;
+    }
+    
+    // Show filters panel when both dates are valid
+    filtersPanel.style.display = 'block';
+    populateFilterOptions();
+    renderCars();
+    return true;
 }
 
 // Populate filter options dynamically
@@ -82,9 +104,28 @@ function renderCars(cars = carsData) {
         return;
     }
 
+    // Sort cars: available first (alphabetically), then unavailable (alphabetically)
+    cars.sort((a, b) => {
+        const aAvailable = isCarAvailable(a, selectedStartDate, selectedEndDate);
+        const bAvailable = isCarAvailable(b, selectedStartDate, selectedEndDate);
+        
+        // Available cars (green) come first
+        if (aAvailable !== bAvailable) {
+            return bAvailable - aAvailable;
+        }
+        
+        // Within same availability, sort alphabetically by brand then model
+        const brandCompare = a.make.localeCompare(b.make);
+        if (brandCompare !== 0) return brandCompare;
+        return a.model.localeCompare(b.model);
+    });
+
     cars.forEach(car => {
+        // Check if car is available for the selected date range
+        const isAvailable = isCarAvailable(car, selectedStartDate, selectedEndDate);
+        
         const carCard = document.createElement('div');
-        carCard.className = `car-card ${car.available ? 'available' : 'unavailable'}`;
+        carCard.className = `car-card ${isAvailable ? 'available' : 'unavailable'}`;
         
         // Get fuel type icon
         const fuelIcons = {
@@ -101,6 +142,9 @@ function renderCars(cars = carsData) {
         };
         const fuelIcon = fuelIcons[car.fuel_type] || 'public/GasolineCar.png';
         const fuelCode = fuelMap[car.fuel_type] || car.fuel_type.charAt(0);
+        
+        // Get booking info for the selected dates
+        const bookingInfo = getBookingInfo(car, selectedStartDate, selectedEndDate);
         
         carCard.innerHTML = `
             <div class="car-image">
@@ -127,19 +171,20 @@ function renderCars(cars = carsData) {
                 </div>
                 <div class="car-status">
                     <div>
-                        <div class="status-label">${car.available ? 'Available' : 'Not available'}</div>
-                        ${!car.available ? `<div class="booked-by">Booked by: ${car.bookedBy}</div>` : ''}
+                        <div class="status-label">${isAvailable ? 'Available' : 'Not available'}</div>
+                        ${!isAvailable ? `<div class="booked-by">${bookingInfo}</div>` : ''}
                     </div>
                 </div>
             </div>
         `;
 
-        carCard.addEventListener('click', () => {
-            if (car.available) {
-                alert(`Booking ${car.make} ${car.model}...`);
-                // Add booking logic here
-            }
-        });
+        // Make card clickable if available
+        if (isAvailable) {
+            carCard.style.cursor = 'pointer';
+            carCard.addEventListener('click', () => {
+                bookCar(car);
+            });
+        }
 
         carsGrid.appendChild(carCard);
     });
@@ -175,9 +220,13 @@ function applyFilters() {
 
     // Sort filtered cars: available first (alphabetically), then unavailable (alphabetically)
     filtered.sort((a, b) => {
+        // Check availability for both cars
+        const aAvailable = isCarAvailable(a, selectedStartDate, selectedEndDate);
+        const bAvailable = isCarAvailable(b, selectedStartDate, selectedEndDate);
+        
         // Available cars come first
-        if (a.available !== b.available) {
-            return b.available - a.available;
+        if (aAvailable !== bAvailable) {
+            return bAvailable - aAvailable;
         }
         // Within same availability, sort by brand then model
         const brandCompare = a.make.localeCompare(b.make);
@@ -241,6 +290,47 @@ function setupMultiSelect() {
     });
 }
 
+// Check if car is available for selected date range
+function isCarAvailable(car, startDate, endDate) {
+    if (!startDate || !endDate) return false;
+    
+    // Check if any booking overlaps with selected dates
+    return !car.bookings.some(booking => {
+        const bookingStart = new Date(booking.start);
+        const bookingEnd = new Date(booking.end);
+        return !(endDate <= bookingStart || startDate >= bookingEnd);
+    });
+}
+
+// Get booking info for selected dates
+function getBookingInfo(car, startDate, endDate) {
+    if (!startDate || !endDate) return '';
+    
+    const overlappingBooking = car.bookings.find(booking => {
+        const bookingStart = new Date(booking.start);
+        const bookingEnd = new Date(booking.end);
+        return !(endDate <= bookingStart || startDate >= bookingEnd);
+    });
+    
+    if (overlappingBooking) {
+        const startStr = new Date(overlappingBooking.start).toLocaleString();
+        const endStr = new Date(overlappingBooking.end).toLocaleString();
+        return `Booked by: ${overlappingBooking.bookedBy || 'Unknown'}`;
+    }
+    return '';
+}
+
+// Handle car booking - navigate to booking page
+function bookCar(car) {
+    // Store selected car and dates in sessionStorage
+    sessionStorage.setItem('selectedCar', JSON.stringify(car));
+    sessionStorage.setItem('selectedStartDate', document.getElementById('startTime').value);
+    sessionStorage.setItem('selectedEndDate', document.getElementById('endTime').value);
+    
+    // Navigate to booking page
+    window.location.href = 'booking.html';
+}
+
 // Clear filters function
 function clearFilters() {
     document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(cb => {
@@ -255,11 +345,16 @@ function clearFilters() {
     document.getElementById('startTime').value = '';
     document.getElementById('endTime').value = '';
     
-    renderCars(carsData);
+    const carsGrid = document.getElementById('carsGrid');
+    carsGrid.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">Please select start and end dates to see available cars</p>';
 }
 
 // Event listeners
 document.getElementById('clearFilters').addEventListener('click', clearFilters);
+
+// Listen for date changes
+document.getElementById('startTime').addEventListener('change', checkDatesAndShowCars);
+document.getElementById('endTime').addEventListener('change', checkDatesAndShowCars);
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
