@@ -10,7 +10,7 @@
         "license_plate": "XCO365",
         "available": true,
         "bookedBy": null,
-        "image": "🚗"
+        "image": "public/cars/tesla-model3.png"
     },
     {
         "id": 2,
@@ -23,7 +23,7 @@
         "license_plate": "QBT306",
         "available": true,
         "bookedBy": null,
-        "image": "🚗"
+        "image": "public/cars/chevrolet-bolt.png"
     },
     {
         "id": 3,
@@ -36,7 +36,7 @@
         "license_plate": "EIO660",
         "available": false,
         "bookedBy": "Sarah Johnson",
-        "image": "🚙"
+        "image": "public/cars/hyundai-kona.png"
     },
     {
         "id": 4,
@@ -49,7 +49,7 @@
         "license_plate": "TRB375",
         "available": true,
         "bookedBy": null,
-        "image": "🚗"
+        "image": "public/cars/kia-ev6.png"
     },
     {
         "id": 5,
@@ -62,7 +62,7 @@
         "license_plate": "NDF820",
         "available": true,
         "bookedBy": null,
-        "image": "🚗"
+        "image": "public/cars/nissan-leaf.png"
     },
     {
         "id": 6,
@@ -75,7 +75,7 @@
         "license_plate": "SIF927",
         "available": false,
         "bookedBy": "Michael Chen",
-        "image": "🚙"
+        "image": "public/cars/volkswagen-id4.png"
     },
     {
         "id": 7,
@@ -88,7 +88,7 @@
         "license_plate": "MLX102",
         "available": true,
         "bookedBy": null,
-        "image": "🚚"
+        "image": "public/cars/ford-f150lighting.png"
     },
     {
         "id": 8,
@@ -101,7 +101,7 @@
         "license_plate": "GES146",
         "available": true,
         "bookedBy": null,
-        "image": "🚗"
+        "image": "public/cars/toyota-prius.png"
     },
     {
         "id": 9,
@@ -114,7 +114,7 @@
         "license_plate": "NXU558",
         "available": false,
         "bookedBy": "Tommy Askey",
-        "image": "🚗"
+        "image": "public/cars/honda-insight.png"
     },
     {
         "id": 10,
@@ -127,7 +127,7 @@
         "license_plate": "NQW100",
         "available": true,
         "bookedBy": null,
-        "image": "🚗"
+        "image": "public/cars/toyota-corolla.png"
     },
     {
         "id": 11,
@@ -140,7 +140,7 @@
         "license_plate": "JTM660",
         "available": false,
         "bookedBy": "Tommy Askey",
-        "image": "🚗"
+        "image": "public/cars/toyota-corolla.png"
     },
     {
         "id": 12,
@@ -153,7 +153,7 @@
         "license_plate": "PEW148",
         "available": true,
         "bookedBy": null,
-        "image": "🚗"
+        "image": "public/cars/honda-civic.png"
     },
     {
         "id": 13,
@@ -166,7 +166,7 @@
         "license_plate": "WEA527",
         "available": true,
         "bookedBy": null,
-        "image": "🚗"
+        "image": "public/cars/honda-civic.png"
     },
     {
         "id": 14,
@@ -179,7 +179,7 @@
         "license_plate": "TCO873",
         "available": false,
         "bookedBy": "Peter Hosewol",
-        "image": "🚗"
+        "image": "public/cars/ford-focus.png"
     },
     {
         "id": 15,
@@ -192,6 +192,6 @@
         "license_plate": "GUU694",
         "available": false,
         "bookedBy": "Peter Hosewol",
-        "image": "🚗"
+        "image": "public/cars/ford-focus.png"
     }
 ]

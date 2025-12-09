@@ -85,7 +85,9 @@ function renderCars(cars = carsData) {
         const fuelCode = fuelMap[car.fuel_type] || car.fuel_type.charAt(0);
         
         carCard.innerHTML = `
-            <div class="car-image">${car.image}</div>
+            <div class="car-image">
+                <img src="${car.image}" alt="${car.make} ${car.model}">
+            </div>
             <div class="car-info">
                 <div>
                     <div class="car-header">
