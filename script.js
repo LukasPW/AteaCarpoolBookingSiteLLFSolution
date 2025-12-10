@@ -72,7 +72,8 @@ function updateUrl(startDate, endDate, brands = [], years = [], seats = [], fuel
  */
 async function loadCars() {
     try {
-        const response = await fetch('cars.json');
+        const response = await fetch('api/get_cars.php');
+        if (!response.ok) throw new Error('Network response was not ok');
         carsData = await response.json();
         
         // Check if we need to restore state from URL
