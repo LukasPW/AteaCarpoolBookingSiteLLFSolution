@@ -3,53 +3,116 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="public\style\style.css">
-    <link rel="stylesheet" href="public\style\bookingPage.css">
+    <link rel="stylesheet" href="public/style/style.css">
+    <link rel="stylesheet" href="public/style/bookingPage.css">
     <title>Atea Car Booking</title>
 </head>
 <body>
 
     <!-- HEADER -->
     <header class="topbar">
-        
-     <img class="logo" src="public\atea-logo.generated.svg" alt="Atea">
-    
+        <img class="logo" src="public/atea-logo.generated.svg" alt="Atea">
         <button class="login-btn">Login</button>
     </header>
 
     <!-- MAIN CONTAINER -->
     <main class="page-container">
-
         <div class="car-card">
-
             <!-- Car Image -->
             <div class="car-image">
-                <img src="public/cars/tesla-model3.png" alt="Tesla Model 3" />
+                <img id="carImage" src="" alt="Car" />
             </div>
 
             <!-- Car Info -->
             <div class="car-info">
-                <h2><span class="brand">Tesla</span> Model 3 <span class="plate">| XCO365</span></h2>
+                <h2><span class="brand" id="carBrand"></span> <span id="carModel"></span> <span class="plate" id="carPlate"></span></h2>
 
                 <div class="car-icons">
-                    <div class="info-item"><img class="car-spec-icon" src="public\CarSeat.png" alt="Seats"> 5</div>
-                    <div class="info-item"><img class="car-spec-icon" src="public\ElectricCar.png" alt="Electric"> E</div>
+                    <div class="info-item"><img class="car-spec-icon" src="public/CarSeat.png" alt="Seats"> <span id="carSeats"></span></div>
+                    <div class="info-item"><img class="car-spec-icon" id="fuelIcon" src="" alt="Fuel"> <span id="fuelCode"></span></div>
                 </div>
 
                 <div class="datetime">
-                    <p><strong>Start:</strong> 10:00 21-09-2025</p>
-                    <p><strong>End:</strong> 12:15 21-09-2025</p>
+                    <p><strong>Start:</strong> <span id="startDateTime"></span></p>
+                    <p><strong>End:</strong> <span id="endDateTime"></span></p>
                 </div>
 
                 <div class="buttons">
-                    <button class="cancel-btn">Cancel</button>
-                    <button class="book-btn">Book car</button>
+                    <button class="cancel-btn" onclick="goBack()">Cancel</button>
+                    <button class="book-btn" onclick="confirmBooking()">Book car</button>
                 </div>
             </div>
-
         </div>
-
     </main>
+
+    <script>
+        // Fuel type icons mapping
+        const fuelIcons = {
+            'Electric': 'public/ElectricCar.png',
+            'Hybrid': 'public/HybridCar.png',
+            'Gasoline': 'public/GasolineCar.png',
+            'Diesel': 'public/GasolineCar.png'
+        };
+        
+        const fuelMap = {
+            'Electric': 'E',
+            'Hybrid': 'H',
+            'Gasoline': 'G',
+            'Diesel': 'D'
+        };
+
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes} ${day}-${month}-${year}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get car and dates from sessionStorage
+            const selectedCar = JSON.parse(sessionStorage.getItem('selectedCar'));
+            const startDate = sessionStorage.getItem('selectedStartDate');
+            const endDate = sessionStorage.getItem('selectedEndDate');
+
+            if (!selectedCar || !startDate || !endDate) {
+                document.querySelector('.car-card').innerHTML = '<p style="text-align: center; color: #999;">No car selected. Please go back and select a car.</p>';
+                return;
+            }
+
+            // Populate car image
+            const carImage = document.getElementById('carImage');
+            carImage.src = selectedCar.image;
+            carImage.alt = `${selectedCar.make} ${selectedCar.model}`;
+
+            // Populate car info
+            document.getElementById('carBrand').textContent = selectedCar.make;
+            document.getElementById('carModel').textContent = selectedCar.model;
+            document.getElementById('carPlate').textContent = `| ${selectedCar.license_plate}`;
+            document.getElementById('carSeats').textContent = selectedCar.seats;
+
+            // Populate fuel type
+            const fuelIcon = fuelIcons[selectedCar.fuel_type] || 'public/GasolineCar.png';
+            const fuelCode = fuelMap[selectedCar.fuel_type] || selectedCar.fuel_type.charAt(0);
+            document.getElementById('fuelIcon').src = fuelIcon;
+            document.getElementById('fuelCode').textContent = fuelCode;
+
+            // Populate dates
+            document.getElementById('startDateTime').textContent = formatDateTime(startDate);
+            document.getElementById('endDateTime').textContent = formatDateTime(endDate);
+        });
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function confirmBooking() {
+            alert('Booking confirmed! [Placeholder, database integration needed]');
+            window.location.href = 'index.html';
+        }
+    </script>
 
 </body>
 </html>
