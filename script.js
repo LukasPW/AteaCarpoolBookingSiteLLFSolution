@@ -30,11 +30,32 @@ let selectedStartDate = null;
 let selectedEndDate = null;
 
 // ===== URL PARAMETER MANAGEMENT =====
+// Convert ISO datetime to readable URL format: YYYYMMDD-HHMM
+function dateToUrlFormat(isoString) {
+    if (!isoString) return null;
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}${month}${day}-${hours}${minutes}`;
+}
+
+// Convert URL format back to ISO datetime: YYYYMMDD-HHMM -> YYYY-MM-DDTHH:MM
+function urlFormatToDate(urlString) {
+    if (!urlString) return null;
+    const match = urlString.match(/(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})/);
+    if (!match) return urlString; // Return as-is if format doesn't match
+    const [, year, month, day, hours, minutes] = match;
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 function getUrlParams() {
     const params = new URLSearchParams(window.location.search);
     return {
-        start: params.get('start'),
-        end: params.get('end'),
+        start: urlFormatToDate(params.get('start')),
+        end: urlFormatToDate(params.get('end')),
         brands: params.get('brands') ? params.get('brands').split(',') : [],
         years: params.get('years') ? params.get('years').split(',') : [],
         seats: params.get('seats') ? params.get('seats').split(',') : [],
@@ -45,17 +66,18 @@ function getUrlParams() {
 /**
  * Update browser URL with current filter state using query parameters
  * Uses history.replaceState to avoid adding new history entries
+ * Dates are formatted as YYYYMMDD-HHMM for readability (e.g., 20251220-1530)
  * @param {string} startDate - Start date in ISO format
  * @param {string} endDate - End date in ISO format
  * @param {Array} brands - Selected brand names
  * @param {Array} years - Selected years
  * @param {Array} seats - Selected seat counts
- * @param {Array} fuels - Selected fuel types
+ * @param {Array} fuels - Selected fuel types (full names: Electric, Hybrid, etc.)
  */
 function updateUrl(startDate, endDate, brands = [], years = [], seats = [], fuels = []) {
     const params = new URLSearchParams();
-    if (startDate) params.set('start', startDate);
-    if (endDate) params.set('end', endDate);
+    if (startDate) params.set('start', dateToUrlFormat(startDate));
+    if (endDate) params.set('end', dateToUrlFormat(endDate));
     if (brands.length > 0) params.set('brands', brands.join(','));
     if (years.length > 0) params.set('years', years.join(','));
     if (seats.length > 0) params.set('seats', seats.join(','));
