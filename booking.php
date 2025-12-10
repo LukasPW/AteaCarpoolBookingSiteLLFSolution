@@ -15,7 +15,7 @@ $userEmail = htmlspecialchars($_SESSION['user_email'] ?? '');
     <link rel="icon" type="image/x-icon" href="public/favicon.ico">
     <link rel="stylesheet" href="public/style/style.css">
     <link rel="stylesheet" href="public/style/booking.css">
-    <title>Atea Car Booking</title>
+    <title>Book Car | Atea Car Booking</title>
 </head>
 <body>
 

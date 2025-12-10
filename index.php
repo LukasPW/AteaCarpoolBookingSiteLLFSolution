@@ -14,7 +14,7 @@ $userEmail = htmlspecialchars($_SESSION['user_email'] ?? '');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="public/favicon.ico">
     <link rel="stylesheet" href="public/style/style.css">
-    <title>Atea Car Booking</title>
+    <title>Home | Atea Car Booking</title>
 </head>
 <body>
     <header class="header">
