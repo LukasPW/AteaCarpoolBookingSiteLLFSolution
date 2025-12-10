@@ -127,7 +127,7 @@ function checkDatesAndShowCars() {
 function populateFilterOptions() {
     // Get unique values from the data
     const brands = [...new Set(carsData.map(car => car.make))].sort();
-    const years = [...new Set(carsData.map(car => car.year))].sort((a, b) => b - a);
+    const years = [...new Set(carsData.map(car => car.year))].sort((a, b) => a - b);
     const seats = [...new Set(carsData.map(car => car.seats))].sort((a, b) => a - b);
     const fuelTypes = [...new Set(carsData.map(car => car.fuel_type))].sort();
     
@@ -338,6 +338,11 @@ function setupMultiSelect() {
     selects.forEach(select => {
         const dropdownId = select.id.replace('Filter', 'Dropdown');
         const dropdown = document.getElementById(dropdownId);
+
+        // Prevent native dropdown from opening (avoids empty/black bar)
+        select.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+        });
         
         // Toggle dropdown on select click
         select.addEventListener('click', (e) => {
