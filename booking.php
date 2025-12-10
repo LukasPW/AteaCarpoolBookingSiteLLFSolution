@@ -14,13 +14,13 @@ $userEmail = htmlspecialchars($_SESSION['user_email'] ?? '');
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="public/favicon.ico">
     <link rel="stylesheet" href="public/style/style.css">
-    <link rel="stylesheet" href="public/style/bookingPage.css">
+    <link rel="stylesheet" href="public/style/booking.css">
     <title>Atea Car Booking</title>
 </head>
 <body>
 
     <!-- HEADER -->
-    <header class="topbar">
+    <header class="header">
         <img class="logo" src="public/atea-logo.generated.svg" alt="Atea">
         <div class="header-right">
             <button class="user-pill" id="userMenuToggle" aria-haspopup="true" aria-expanded="false">
