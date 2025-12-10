@@ -3,23 +3,87 @@ let carsData = [];
 let selectedStartDate = null;
 let selectedEndDate = null;
 
+// URL parameter utilities
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        start: params.get('start'),
+        end: params.get('end'),
+        brands: params.get('brands') ? params.get('brands').split(',') : [],
+        years: params.get('years') ? params.get('years').split(',') : [],
+        seats: params.get('seats') ? params.get('seats').split(',') : [],
+        fuels: params.get('fuels') ? params.get('fuels').split(',') : []
+    };
+}
+
+function updateUrl(startDate, endDate, brands = [], years = [], seats = [], fuels = []) {
+    const params = new URLSearchParams();
+    if (startDate) params.set('start', startDate);
+    if (endDate) params.set('end', endDate);
+    if (brands.length > 0) params.set('brands', brands.join(','));
+    if (years.length > 0) params.set('years', years.join(','));
+    if (seats.length > 0) params.set('seats', seats.join(','));
+    if (fuels.length > 0) params.set('fuels', fuels.join(','));
+    
+    const newUrl = params.toString() ? `?${params.toString()}` : '';
+    window.history.replaceState({}, '', newUrl);
+}
+
 // Fetch cars from JSON file
 async function loadCars() {
     try {
         const response = await fetch('cars.json');
         carsData = await response.json();
         
-        // Check if dates are already set
-        const startTime = document.getElementById('startTime');
-        const endTime = document.getElementById('endTime');
+        // Check if we need to restore state from URL
+        const urlParams = getUrlParams();
         
-        if (startTime.value && endTime.value) {
-            populateFilterOptions();
-            renderCars();
+        if (urlParams.start && urlParams.end) {
+            document.getElementById('startTime').value = urlParams.start;
+            document.getElementById('endTime').value = urlParams.end;
+            checkDatesAndShowCars();
+            
+            // Restore filter selections from URL
+            setTimeout(() => restoreFiltersFromUrl(urlParams), 100);
         }
     } catch (error) {
         console.error('Error loading cars:', error);
         document.getElementById('carsGrid').innerHTML = '<p style="color: #e74c3c; text-align: center; padding: 40px;">Error loading cars data</p>';
+    }
+}
+
+// Restore filter selections from URL params
+function restoreFiltersFromUrl(urlParams) {
+    // Restore brands
+    if (urlParams.brands.length > 0) {
+        document.querySelectorAll('#brandDropdown input[type="checkbox"]').forEach(cb => {
+            cb.checked = urlParams.brands.includes(cb.value);
+        });
+    }
+    
+    // Restore years
+    if (urlParams.years.length > 0) {
+        document.querySelectorAll('#yearDropdown input[type="checkbox"]').forEach(cb => {
+            cb.checked = urlParams.years.includes(cb.value);
+        });
+    }
+    
+    // Restore seats
+    if (urlParams.seats.length > 0) {
+        document.querySelectorAll('#seatsDropdown input[type="checkbox"]').forEach(cb => {
+            cb.checked = urlParams.seats.includes(cb.value);
+        });
+    }
+    
+    // Restore fuels
+    if (urlParams.fuels.length > 0) {
+        document.querySelectorAll('#fuelDropdown input[type="checkbox"]').forEach(cb => {
+            cb.checked = urlParams.fuels.includes(cb.value);
+        });
+    }
+    
+    if (urlParams.brands.length > 0 || urlParams.years.length > 0 || urlParams.seats.length > 0 || urlParams.fuels.length > 0) {
+        applyFilters();
     }
 }
 
@@ -45,9 +109,12 @@ function checkDatesAndShowCars() {
         return false;
     }
     
-    // Save dates to sessionStorage
-    sessionStorage.setItem('selectedStartDate', startTime.value);
-    sessionStorage.setItem('selectedEndDate', endTime.value);
+    // Update URL with dates
+    const brandFilter = Array.from(document.querySelectorAll('#brandDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
+    const yearFilter = Array.from(document.querySelectorAll('#yearDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
+    const seatsFilter = Array.from(document.querySelectorAll('#seatsDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
+    const fuelFilter = Array.from(document.querySelectorAll('#fuelDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
+    updateUrl(startTime.value, endTime.value, brandFilter, yearFilter, seatsFilter, fuelFilter);
     
     // Show filters panel when both dates are valid
     filtersPanel.style.display = 'block';
@@ -244,6 +311,11 @@ function applyFilters() {
     updateSelectDisplay('seatsFilter', seatsFilter.length, 'seats');
     updateSelectDisplay('fuelFilter', fuelFilter.length, 'fuel types');
 
+    // Update URL with current filters
+    const startTime = document.getElementById('startTime').value;
+    const endTime = document.getElementById('endTime').value;
+    updateUrl(startTime, endTime, brandFilter, yearFilter, seatsFilter, fuelFilter);
+
     renderCars(filtered);
 }
 
@@ -349,6 +421,9 @@ function clearFilters() {
     document.getElementById('startTime').value = '';
     document.getElementById('endTime').value = '';
     
+    // Clear URL parameters
+    updateUrl('', '', [], [], [], []);
+    
     const carsGrid = document.getElementById('carsGrid');
     carsGrid.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">Please select start and end dates to see available cars</p>';
 }
@@ -363,14 +438,4 @@ document.getElementById('endTime').addEventListener('change', checkDatesAndShowC
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     loadCars();
-    
-    // Restore dates from sessionStorage if they exist
-    const savedStartDate = sessionStorage.getItem('selectedStartDate');
-    const savedEndDate = sessionStorage.getItem('selectedEndDate');
-    
-    if (savedStartDate && savedEndDate) {
-        document.getElementById('startTime').value = savedStartDate;
-        document.getElementById('endTime').value = savedEndDate;
-        checkDatesAndShowCars();
-    }
 });
