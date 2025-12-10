@@ -22,7 +22,7 @@
         "license_plate": "QBT306",
         "image": "public/cars/chevrolet-bolt.png",
         "bookings": [
-            {"start": "2025-12-20T09:00", "end": "2025-12-20T17:00", "bookedBy": "Sarah Johnson"}
+            {"start": "2025-12-20T09:00", "end": "2025-12-20T17:00", "bookedBy": "Ron van Meer"}
         ]
     },
     {
@@ -36,8 +36,8 @@
         "license_plate": "EIO660",
         "image": "public/cars/hyundai-kona.png",
         "bookings": [
-            {"start": "2025-12-10T10:00", "end": "2025-12-10T15:00", "bookedBy": "Sarah Johnson"},
-            {"start": "2025-12-22T14:00", "end": "2025-12-22T16:00", "bookedBy": "Sarah Johnson"}
+            {"start": "2025-12-10T10:00", "end": "2025-12-10T15:00", "bookedBy": "Ron van Meer"},
+            {"start": "2025-12-22T14:00", "end": "2025-12-22T16:00", "bookedBy": "Ron van Meer"}
         ]
     },
     {
@@ -75,8 +75,8 @@
         "license_plate": "SIF927",
         "image": "public/cars/volkswagen-id4.png",
         "bookings": [
-            {"start": "2025-12-16T11:00", "end": "2025-12-16T13:00", "bookedBy": "Michael Chen"},
-            {"start": "2025-12-18T09:00", "end": "2025-12-18T17:00", "bookedBy": "Michael Chen"}
+            {"start": "2025-12-16T11:00", "end": "2025-12-16T13:00", "bookedBy": "Martijn Vanderfeesten"},
+            {"start": "2025-12-18T09:00", "end": "2025-12-18T17:00", "bookedBy": "Martijn Vanderfeesten"}
         ]
     },
     {

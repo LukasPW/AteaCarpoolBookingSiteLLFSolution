@@ -331,7 +331,8 @@ body {
 
 .car-card.unavailable {
     border-color: var(--danger-color);
-    background-color: #fafafa;
+    opacity: 0.55;
+    pointer-events: none;
 }
 
 .car-image {
