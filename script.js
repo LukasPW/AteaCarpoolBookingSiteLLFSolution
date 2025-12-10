@@ -1,9 +1,35 @@
+/**
+ * =====================================
+ * MAIN BOOKING APPLICATION - script.js
+ * =====================================
+ * 
+ * This script handles the main carpool booking interface.
+ * It manages:
+ *  - Loading and displaying available cars
+ *  - Date/time selection and validation
+ *  - Multi-filter functionality (brand, year, seats, fuel type)
+ *  - URL parameter persistence for shareable filters
+ *  - Car availability checking based on booking conflicts
+ *  - Responsive car card rendering with sorting
+ *
+ * Data Flow:
+ *  1. Load cars.json on page load
+ *  2. Restore filters from URL parameters (if present)
+ *  3. User selects start/end dates
+ *  4. Filters panel becomes visible
+ *  5. User applies filters via checkboxes
+ *  6. Cars are sorted (available first, then alphabetically)
+ *  7. URL updates with current filter state
+ *  8. Clicking a car stores its data and redirects to booking.html
+ */
+
+// ===== GLOBAL STATE =====
 // Global variable to store cars data
 let carsData = [];
 let selectedStartDate = null;
 let selectedEndDate = null;
 
-// URL parameter utilities
+// ===== URL PARAMETER MANAGEMENT =====
 function getUrlParams() {
     const params = new URLSearchParams(window.location.search);
     return {
@@ -16,6 +42,16 @@ function getUrlParams() {
     };
 }
 
+/**
+ * Update browser URL with current filter state using query parameters
+ * Uses history.replaceState to avoid adding new history entries
+ * @param {string} startDate - Start date in ISO format
+ * @param {string} endDate - End date in ISO format
+ * @param {Array} brands - Selected brand names
+ * @param {Array} years - Selected years
+ * @param {Array} seats - Selected seat counts
+ * @param {Array} fuels - Selected fuel types
+ */
 function updateUrl(startDate, endDate, brands = [], years = [], seats = [], fuels = []) {
     const params = new URLSearchParams();
     if (startDate) params.set('start', startDate);
@@ -29,7 +65,11 @@ function updateUrl(startDate, endDate, brands = [], years = [], seats = [], fuel
     window.history.replaceState({}, '', newUrl);
 }
 
-// Fetch cars from JSON file
+/**
+ * Fetch cars from JSON file and initialize the application
+ * If URL contains filter parameters, restores those filters automatically
+ * This is called on page load via DOMContentLoaded event
+ */
 async function loadCars() {
     try {
         const response = await fetch('cars.json');
@@ -52,7 +92,12 @@ async function loadCars() {
     }
 }
 
-// Restore filter selections from URL params
+/**
+ * Restore filter checkbox selections based on URL parameters
+ * This allows users to share links with pre-applied filters
+ * Uses a small timeout to ensure DOM is fully ready
+ * @param {Object} urlParams - Object from getUrlParams() containing filter arrays
+ */
 function restoreFiltersFromUrl(urlParams) {
     // Restore brands
     if (urlParams.brands.length > 0) {
@@ -87,7 +132,15 @@ function restoreFiltersFromUrl(urlParams) {
     }
 }
 
-// Check if dates are set and show/hide cars
+/**
+ * Validate date inputs and control visibility of filters panel
+ * Requirements:
+ *  - Both start and end dates must be selected
+ *  - End date must be after start date
+ * When valid, shows the filters panel and renders available cars
+ * Also updates URL with the selected dates
+ * @returns {boolean} true if dates are valid, false otherwise
+ */
 function checkDatesAndShowCars() {
     const startTime = document.getElementById('startTime');
     const endTime = document.getElementById('endTime');
@@ -123,7 +176,12 @@ function checkDatesAndShowCars() {
     return true;
 }
 
-// Populate filter options dynamically
+/**
+ * Dynamically populate filter dropdowns based on unique values in cars.json
+ * Extracts unique brands, years, seats, and fuel types from all cars
+ * Years are sorted oldest to newest for better UX
+ * Re-initializes multi-select listeners after populating
+ */
 function populateFilterOptions() {
     // Get unique values from the data
     const brands = [...new Set(carsData.map(car => car.make))].sort();
@@ -165,7 +223,21 @@ function populateFilterOptions() {
     setupMultiSelect();
 }
 
-// Render cars
+/**
+ * Render car cards to the grid with proper styling and functionality
+ * Sorting Logic:
+ *  1. Available cars (green border) appear first
+ *  2. Within availability, sorted alphabetically by brand then model
+ *  3. Unavailable cars (red border) appear at the bottom
+ * 
+ * Features:
+ *  - Shows car image, brand, model, year, seats, fuel type
+ *  - Green border for available cars, red for booked
+ *  - Shows who booked the car and when (if unavailable)
+ *  - Only available cars are clickable
+ * 
+ * @param {Array} cars - Array of car objects to render (defaults to all carsData)
+ */
 function renderCars(cars = carsData) {
     const carsGrid = document.getElementById('carsGrid');
     carsGrid.innerHTML = '';
@@ -261,7 +333,19 @@ function renderCars(cars = carsData) {
     });
 }
 
-// Filter functionality
+/**
+ * Apply selected filters to the car list
+ * Filter Logic: OR logic within each filter type (match any selected value)
+ * Example: If "Tesla" and "BMW" are selected, show cars with either brand
+ * 
+ * Process:
+ *  1. Collect all checked filter values
+ *  2. Filter car list based on selections
+ *  3. Sort filtered results (available first, then alphabetically)
+ *  4. Update filter display text (e.g., "3 brands selected")
+ *  5. Update URL with current filter state
+ *  6. Re-render the car grid
+ */
 function applyFilters() {
     const brandCheckboxes = document.querySelectorAll('#brandDropdown input[type="checkbox"]:checked');
     const yearCheckboxes = document.querySelectorAll('#yearDropdown input[type="checkbox"]:checked');
@@ -319,7 +403,14 @@ function applyFilters() {
     renderCars(filtered);
 }
 
-// Update select display text
+/**
+ * Update the displayed text on filter select elements
+ * When filters are selected, shows "X filters selected"
+ * When no filters are selected, shows the placeholder text
+ * @param {string} selectId - HTML element ID of the select
+ * @param {number} count - Number of selected filters
+ * @param {string} label - Descriptive label (e.g., 'brands', 'years')
+ */
 function updateSelectDisplay(selectId, count, label) {
     const select = document.getElementById(selectId);
     if (count > 0) {
@@ -331,7 +422,15 @@ function updateSelectDisplay(selectId, count, label) {
     }
 }
 
-// Toggle dropdown
+/**
+ * Initialize multi-select dropdown functionality
+ * Features:
+ *  - Prevents native browser dropdown to avoid visual artifacts
+ *  - Toggle dropdown visibility on click
+ *  - Close other dropdowns when one is opened
+ *  - Close all dropdowns when clicking outside
+ *  - Trigger applyFilters when any checkbox is changed
+ */
 function setupMultiSelect() {
     const selects = document.querySelectorAll('.multi-select');
     
@@ -371,7 +470,15 @@ function setupMultiSelect() {
     });
 }
 
-// Check if car is available for selected date range
+/**
+ * Check if a car is available for the selected date range
+ * A car is unavailable if it has ANY booking that overlaps with selected dates
+ * Date overlap logic: Two date ranges overlap if NOT (endA <= startB || startA >= endB)
+ * @param {Object} car - Car object from cars.json
+ * @param {Date} startDate - Selected start date
+ * @param {Date} endDate - Selected end date
+ * @returns {boolean} true if car is available, false if booked
+ */
 function isCarAvailable(car, startDate, endDate) {
     if (!startDate || !endDate) return false;
     
@@ -383,7 +490,14 @@ function isCarAvailable(car, startDate, endDate) {
     });
 }
 
-// Get booking info for selected dates
+/**
+ * Get booking details for display when car is unavailable
+ * Returns the name of the person who booked the car
+ * @param {Object} car - Car object from cars.json
+ * @param {Date} startDate - Selected start date
+ * @param {Date} endDate - Selected end date
+ * @returns {string} Formatted booking info (e.g., "Booked by: John Smith")
+ */
 function getBookingInfo(car, startDate, endDate) {
     if (!startDate || !endDate) return '';
     
@@ -401,7 +515,11 @@ function getBookingInfo(car, startDate, endDate) {
     return '';
 }
 
-// Handle car booking - navigate to booking page
+/**
+ * Handle car booking: Store selected car and dates, then navigate to booking confirmation page
+ * Data is stored in sessionStorage so it persists during browser navigation
+ * @param {Object} car - Selected car object
+ */
 function bookCar(car) {
     // Store selected car and dates in sessionStorage
     sessionStorage.setItem('selectedCar', JSON.stringify(car));
@@ -412,7 +530,13 @@ function bookCar(car) {
     window.location.href = 'booking.html';
 }
 
-// Clear filters function
+/**
+ * Reset all filters and dates to initial state
+ * - Uncheck all filter checkboxes
+ * - Clear date inputs
+ * - Clear URL parameters
+ * - Show initial message prompting date selection
+ */
 function clearFilters() {
     document.querySelectorAll('.multi-select-dropdown input[type="checkbox"]').forEach(cb => {
         cb.checked = false;
