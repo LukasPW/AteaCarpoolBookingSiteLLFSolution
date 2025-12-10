@@ -67,6 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const startDate = sessionStorage.getItem('selectedStartDate');
     const endDate = sessionStorage.getItem('selectedEndDate');
 
+    if (selectedCar) {
+        document.title = `${selectedCar.make} ${selectedCar.model} | Atea Car Booking`;
+    }
+
     if (!selectedCar || !startDate || !endDate) {
         document.querySelector('.car-card').innerHTML = '<p style="text-align: center; color: #999;">No car selected. Please go back and select a car.</p>';
         return;
