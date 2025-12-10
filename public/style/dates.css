@@ -1,0 +1,71 @@
+/* Date Selection Section */
+.date-selection-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #27ae60 100%);
+    padding: 20px 20px;
+    margin-top: 10vh;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    margin: 10vh 20px 0 20px;
+}
+
+.date-inputs-container {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.date-inputs-container h2 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.date-inputs {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.date-group {
+    flex: 1;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.date-group label {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    margin-bottom: 6px;
+    font-size: 12px;
+}
+
+.date-group input {
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    background: white;
+    color: var(--text-dark);
+}
+
+.date-group input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .date-inputs {
+        flex-direction: column;
+    }
+
+    .date-group {
+        min-width: 100%;
+    }
+
+    .date-inputs-container h2 {
+        font-size: 20px;
+    }
+}

@@ -1,3 +1,12 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
+    exit;
+}
+$userName = htmlspecialchars($_SESSION['user_name'] ?? 'User');
+$userEmail = htmlspecialchars($_SESSION['user_email'] ?? '');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +22,15 @@
     <!-- HEADER -->
     <header class="topbar">
         <img class="logo" src="public/atea-logo.generated.svg" alt="Atea">
-        <button class="login-btn">Login</button>
+        <div class="header-right">
+            <button class="user-pill" id="userMenuToggle" aria-haspopup="true" aria-expanded="false">
+                <span class="user-name"><?php echo $userName; ?></span>
+                <img src="public/UserIcon.png" alt="User" class="user-avatar">
+            </button>
+            <div class="user-menu" id="userMenu" hidden>
+                <button id="logoutBtn" class="logout-item">Logout</button>
+            </div>
+        </div>
     </header>
 
     <!-- MAIN CONTAINER -->
@@ -46,7 +63,10 @@
         </div>
     </main>
 
-    <script src="booking.js"></script>
+    <!-- Modular JavaScript files loaded in dependency order -->
+    <script src="public/js/utils.js"></script>
+    <script src="public/js/auth.js"></script>
+    <script src="public/js/booking.js"></script>
 
 </body>
 </html>
