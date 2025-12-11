@@ -1,31 +1,25 @@
-/**
- * ================================
- * BOOKING PAGE STYLES - booking.css
- * ================================
- * 
- * Styles specific to the booking confirmation page
- * - Car detail card layout
- * - Date/time display
- * - Action buttons (cancel, confirm)
- */
+/* ================================
+   BOOKING PAGE STYLES - booking.css
+   ================================ */
 
 /* Page container */
 .page-container {
-    padding: 15vh;
+    padding: 10vh 2vw;
     display: flex;
     justify-content: center;
 }
 
 /* Booking confirmation card */
 .car-card {
-    width: 90%;
+    width: 100%;
     max-width: 1200px;
     background: white;
     padding: 20px;
     border-radius: 12px;
     display: flex;
-    align-items: center;
-    gap: 30px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
     box-shadow: 0 3px 8px rgba(0,0,0,0.1);
     transition: none !important;
 }
@@ -38,8 +32,10 @@
 
 /* Car image section */
 .car-card .car-image {
-    width: 45%;
-    height: 300px;
+    flex: 1 1 300px;
+    min-width: 250px;
+    max-width: 45%;
+    height: 200px;
     border-radius: 6px;
     background: #f1f1f1;
     display: flex;
@@ -56,11 +52,13 @@
 
 /* Car info section */
 .car-card .car-info {
-    width: 55%;
+    flex: 1 1 300px;
+    min-width: 250px;
+    max-width: 55%;
 }
 
 .car-card .car-info h2 {
-    font-size: 28px;
+    font-size: 24px;
     margin-bottom: 10px;
 }
 
@@ -76,29 +74,31 @@
 /* Car icons/specs */
 .car-card .car-icons {
     display: flex;
-    gap: 20px;
-    font-size: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 18px;
     margin: 10px 0 20px;
 }
 
 /* Date/time display */
 .datetime p {
     margin: 5px 0;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 /* Action buttons */
 .buttons {
-    margin-top: 25px;
+    margin-top: 20px;
     display: flex;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .cancel-btn {
     background: #e0e0e0;
     border: none;
-    padding: 10px 25px;
-    font-size: 18px;
+    padding: 10px 20px;
+    font-size: 16px;
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s ease;
@@ -112,8 +112,8 @@
     background: var(--primary-color, #00a82d);
     color: white;
     border: none;
-    padding: 10px 25px;
-    font-size: 18px;
+    padding: 10px 20px;
+    font-size: 16px;
     border-radius: 8px;
     cursor: pointer;
     transition: background 0.2s ease;
@@ -121,4 +121,55 @@
 
 .book-btn:hover {
     background: #008f26;
+}
+
+/* ===========================
+   MEDIA QUERIES
+   =========================== */
+@media (max-width: 992px) {
+    .car-card {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+    }
+    .car-card .car-image,
+    .car-card .car-info {
+        max-width: 100%;
+    }
+    .car-card .car-info h2 {
+        font-size: 22px;
+    }
+    .datetime p {
+        font-size: 15px;
+    }
+    .cancel-btn,
+    .book-btn {
+        font-size: 15px;
+        padding: 8px 18px;
+    }
+}
+
+@media (max-width: 576px) {
+    .page-container {
+        padding: 5vh 2vw;
+    }
+    .car-card .car-image {
+        height: 180px;
+    }
+    .car-card .car-info h2 {
+        font-size: 20px;
+    }
+    .car-card .car-icons {
+        font-size: 16px;
+        gap: 10px;
+    }
+    .buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    .cancel-btn,
+    .book-btn {
+        width: 100%;
+        text-align: center;
+    }
 }
