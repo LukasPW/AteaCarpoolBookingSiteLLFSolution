@@ -174,6 +174,23 @@ async function confirmBooking() {
         });
 
         const data = await res.json().catch(() => ({}));
+        let emailMessage = '';
+        if (typeof data.email_sent === 'boolean') {
+            if (data.email_sent) {
+                emailMessage = `
+                    <p class="summary-note">
+                        A confirmation email has been sent to your email address.
+                    </p>
+                `;
+            } else {
+                emailMessage = `
+                    <p class="summary-note summary-note-warning">
+                        We could not send a confirmation email.  
+                        You can still use this confirmation as proof of your booking.
+                    </p>
+                `;
+            }
+        }
 
         if (!res.ok) {
             showModal('Booking Failed', data.msg || 'Unable to complete the booking.', 'error');
@@ -186,7 +203,8 @@ async function confirmBooking() {
             startDate,
             endDate,
             sessionStorage.getItem('userName') || 'User',
-            data.id
+            data.id,
+            emailMessage
         );
         
         // Clear selected booking after success
@@ -205,7 +223,7 @@ async function confirmBooking() {
  * Print booking summary to PDF
  * Uses the browser's print dialog to save as PDF
  */
-function createBookingSummary(car, startDate, endDate, userName, bookingId) {
+function createBookingSummary(car, startDate, endDate, userName, bookingId, emailMessage = '') {
     const start = new Date(startDate);
     const end = new Date(endDate);
     const durationMs = end - start;
@@ -292,6 +310,8 @@ function createBookingSummary(car, startDate, endDate, userName, bookingId) {
                         ${durationDays > 0 ? `${durationDays} day(s) ` : ''}${remainingHours} hour(s)
                     </span>
                 </div>
+
+                ${emailMessage}
             </section>
         </div>
     `;

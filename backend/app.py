@@ -4,6 +4,8 @@ from config import Config
 from routes.cars import cars_bp
 from routes.auth import auth_bp
 from routes.bookings import booking_bp
+from dotenv import load_dotenv
+load_dotenv()
 
 def create_app():
     app = Flask(__name__)

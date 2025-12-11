@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from db import get_conn
+from email_service import send_booking_confirmation
 
 booking_bp = Blueprint("booking_bp", __name__, url_prefix="/api")
 
@@ -66,9 +67,12 @@ def create_booking():
         print("BLOCKED: CAR ALREADY BOOKED")
         return jsonify({"msg": "car already booked in that time slot"}), 409
 
-    # insert booking
     db = debug_db()
-    cursor = db.cursor()
+    cursor = db.cursor(dictionary=True)
+
+    # Nieuw: track of mail wel/niet gelukt is
+    email_sent = False
+
     try:
         cursor.execute(
             "INSERT INTO bookings (car_id, start_datetime, end_datetime, booked_by) VALUES (%s, %s, %s, %s)",
@@ -77,6 +81,39 @@ def create_booking():
         db.commit()
         new_id = cursor.lastrowid
         print("INSERTED BOOKING ID:", new_id)
+        
+        # Get car details for email
+        cursor.execute(
+            "SELECT make, model, license_plate FROM cars WHERE id = %s",
+            (car_id,)
+        )
+        car_data = cursor.fetchone()
+        
+        # Get user info from session
+        user_email = session.get("user_email")
+        user_name = session.get("user_name") or booked_by
+
+        # Send confirmation email if user email is available
+        if user_email and car_data:
+            car_info = {
+                "make": car_data["make"],
+                "model": car_data["model"],
+                "license_plate": car_data["license_plate"],
+            }
+
+            success, msg = send_booking_confirmation(
+                user_email,
+                user_name,
+                new_id,
+                car_info,
+                start,
+                end,
+            )
+            email_sent = bool(success)
+            print("[EMAIL RESULT]", success, msg)
+        else:
+            print("[EMAIL] Skipped – no user_email in session or no car_data")
+        
     except Exception as e:
         print("SQL ERROR:", e)
         db.rollback()
@@ -87,4 +124,9 @@ def create_booking():
     cursor.close()
     db.close()
 
-    return jsonify({"msg": "booking created", "id": new_id}), 201
+    return jsonify({
+        "msg": "booking created",
+        "id": new_id,
+        "email_sent": email_sent
+    }), 201
+

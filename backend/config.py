@@ -13,3 +13,10 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"  # set to "None" + HTTPS if cross-site
     SESSION_COOKIE_SECURE = False      # set True when serving over HTTPS
+    
+    # Email configuration (optional - leave blank for development)
+    # For Gmail: Use App Password (not regular password)
+    # SMTP_SERVER = 'smtp.gmail.com'
+    # SMTP_PORT = 587
+    # SENDER_EMAIL = 'your-email@gmail.com'
+    # SENDER_PASSWORD = 'your-app-password'
