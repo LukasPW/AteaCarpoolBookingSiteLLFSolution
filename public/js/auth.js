@@ -31,7 +31,7 @@ function clearStoredUser() {
 /**
  * Initialize authentication UI state
  * Shows/hides login button vs user chip based on session state
- * NOTE: This function is currently unused since PHP handles server-side auth
+ * NOTE: This function is currently unused since Python handles server-side auth
  * Kept for potential future client-side enhancements
  */
 function initAuthUI() {
