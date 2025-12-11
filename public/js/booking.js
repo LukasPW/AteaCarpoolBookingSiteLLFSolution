@@ -21,6 +21,51 @@
  */
 
 /**
+ * Show custom modal popup
+ */
+function showModal(title, message, type = 'info', callback = null) {
+    console.log('showModal() called with:', title, message, type);
+    const overlay = document.getElementById('modalOverlay');
+    const dialog = document.getElementById('modalDialog');
+    const titleEl = document.getElementById('modalTitle');
+    const messageEl = document.getElementById('modalMessage');
+    const buttonEl = document.getElementById('modalButton');
+
+    if (!overlay || !dialog || !titleEl || !messageEl || !buttonEl) {
+        console.error('Modal elements not found!', { overlay, dialog, titleEl, messageEl, buttonEl });
+        alert(message); // Fallback to alert if modal elements missing
+        return;
+    }
+
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+
+    // Remove all type classes and add the appropriate one
+    dialog.className = 'modal-dialog ' + type;
+    buttonEl.className = 'modal-button' + (type === 'error' ? ' danger' : '');
+
+    // Store callback for when modal is closed
+    window.modalCallback = callback;
+
+    console.log('Showing modal overlay');
+    overlay.classList.add('show');
+}
+
+/**
+ * Close the modal popup
+ */
+function closeModal() {
+    const overlay = document.getElementById('modalOverlay');
+    overlay.classList.remove('show');
+    
+    // Execute callback if provided
+    if (window.modalCallback && typeof window.modalCallback === 'function') {
+        window.modalCallback();
+        window.modalCallback = null;
+    }
+}
+
+/**
  * Initialize the booking page with car and date information
  * This event fires when the DOM is fully loaded
  * 
@@ -82,13 +127,18 @@ function goBack() {
  * Called when user clicks the "Book car" button
  */
 async function confirmBooking() {
+    console.log('confirmBooking() called');
     const API_BASE = window.API_BASE || 'http://localhost:5000/api';
     const selectedCar = JSON.parse(sessionStorage.getItem('selectedCar'));
     const startDate = sessionStorage.getItem('selectedStartDate');
     const endDate = sessionStorage.getItem('selectedEndDate');
 
+    console.log('selectedCar:', selectedCar);
+    console.log('startDate:', startDate);
+    console.log('endDate:', endDate);
+
     if (!selectedCar || !startDate || !endDate) {
-        alert('No car selected. Please go back and select a car.');
+        showModal('Error', 'No car selected. Please go back and select a car.', 'error');
         return;
     }
 
@@ -106,6 +156,8 @@ async function confirmBooking() {
         booked_by: sessionStorage.getItem('userName') || 'User'
     };
 
+    console.log('Sending payload:', payload);
+
     try {
         const res = await fetch(`${API_BASE}/bookings`, {
             method: 'POST',
@@ -114,9 +166,12 @@ async function confirmBooking() {
             body: JSON.stringify(payload)
         });
 
+        console.log('Response status:', res.status);
         const data = await res.json().catch(() => ({}));
+        console.log('Response data:', data);
+
         if (!res.ok) {
-            alert(data.error || 'Booking failed');
+            showModal('Booking Failed', data.msg || 'Unable to complete the booking.', 'error');
             return;
         }
 
@@ -124,9 +179,15 @@ async function confirmBooking() {
         sessionStorage.removeItem('selectedCar');
         sessionStorage.removeItem('selectedStartDate');
         sessionStorage.removeItem('selectedEndDate');
-        alert('Booking confirmed!');
-        window.location.href = 'index.html';
+        
+        console.log('About to show success modal');
+        showModal('Success', 'Booking confirmed!', 'success', () => {
+            console.log('Modal callback: redirecting to index.html');
+            window.location.href = 'index.html';
+        });
+        console.log('Success modal shown');
     } catch (err) {
-        alert('Network error. Please try again.');
+        console.error('Booking error:', err);
+        showModal('Error', 'Network error. Please try again.', 'error');
     }
 }
