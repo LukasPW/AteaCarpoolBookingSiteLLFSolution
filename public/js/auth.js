@@ -58,14 +58,14 @@ function initAuthUI() {
 
     loginBtn.onclick = () => {
         sessionStorage.setItem('postLoginRedirect', window.location.pathname);
-        window.location.href = 'login.php';
+        window.location.href = 'login.html';
     };
 
     if (logoutBtn) {
         logoutBtn.onclick = () => {
             clearStoredUser();
             renderState();
-            window.location.href = 'login.php';
+            window.location.href = 'login.html';
         };
     }
 
@@ -116,7 +116,7 @@ function initUserMenu() {
         sessionStorage.removeItem('userEmail');
         sessionStorage.removeItem('userName');
         closeMenu();
-        window.location.href = 'login.php';
+        window.location.href = 'login.html';
     });
 
     document.addEventListener('click', (e) => {
