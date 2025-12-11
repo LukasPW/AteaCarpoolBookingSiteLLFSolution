@@ -9,9 +9,9 @@
  * clicked on a car in the main booking page.
  * 
  * Data Flow:
- *  1. User clicks on a car in index.php
+ *  1. User clicks on a car in index.html
  *  2. bookCar() stores car + dates in sessionStorage
- *  3. User redirected to booking.php
+ *  3. User redirected to booking.html
  *  4. This script loads sessionStorage data and populates the page
  *  5. User confirms or cancels the booking
  * 
@@ -80,12 +80,53 @@ function goBack() {
 /**
  * Confirm the booking and return to main page
  * Called when user clicks the "Book car" button
- * 
- * Note: Currently shows a placeholder alert.
- * This function should be updated to send booking data to backend/database
- * before redirecting to index.php
  */
-function confirmBooking() {
-    alert('Booking confirmed! [Placeholder, database integration needed]');
-    window.location.href = 'index.php';
+async function confirmBooking() {
+    const API_BASE = window.API_BASE || 'http://localhost:5000/api';
+    const selectedCar = JSON.parse(sessionStorage.getItem('selectedCar'));
+    const startDate = sessionStorage.getItem('selectedStartDate');
+    const endDate = sessionStorage.getItem('selectedEndDate');
+
+    if (!selectedCar || !startDate || !endDate) {
+        alert('No car selected. Please go back and select a car.');
+        return;
+    }
+
+    // Normalize to "YYYY-MM-DD HH:MM:SS" for the API
+    const toDbFormat = (value) => {
+        const d = new Date(value);
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
+    };
+
+    const payload = {
+        car_id: selectedCar.id,
+        start_datetime: toDbFormat(startDate),
+        end_datetime: toDbFormat(endDate),
+        booked_by: sessionStorage.getItem('userName') || 'User'
+    };
+
+    try {
+        const res = await fetch(`${API_BASE}/bookings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            alert(data.error || 'Booking failed');
+            return;
+        }
+
+        // Clear selected booking after success
+        sessionStorage.removeItem('selectedCar');
+        sessionStorage.removeItem('selectedStartDate');
+        sessionStorage.removeItem('selectedEndDate');
+        alert('Booking confirmed!');
+        window.location.href = 'index.html';
+    } catch (err) {
+        alert('Network error. Please try again.');
+    }
 }

@@ -39,7 +39,7 @@
             <button type="submit">Login</button>
             <div class="error" id="errorBox" style="display:none;"></div>
         </form>
-        <p class="register-link">Don't have an account? <a href="register.php">Register here</a></p>
+        <p class="register-link">Don't have an account? <a href="register.html">Register here</a></p>
     </div>
     <script>
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -64,7 +64,7 @@
             }
             if (data.name) sessionStorage.setItem('userName', data.name);
             if (data.email) sessionStorage.setItem('userEmail', data.email);
-            window.location.href = 'index.php';
+            window.location.href = 'index.html';
         } catch (err) {
             errorBox.textContent = 'Network error. Please try again.';
             errorBox.style.display = 'block';

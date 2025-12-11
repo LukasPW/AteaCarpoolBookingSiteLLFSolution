@@ -166,5 +166,5 @@ function bookCar(car) {
     sessionStorage.setItem('selectedEndDate', document.getElementById('endTime').value);
     
     // Navigate to booking page
-    window.location.href = 'booking.php';
+    window.location.href = 'booking.html';
 }
