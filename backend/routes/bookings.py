@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
-from db import get_db
+from db import get_conn
 
-booking_bp = Blueprint("booking_bp", __name__)
+booking_bp = Blueprint("booking_bp", __name__, url_prefix="/api")
 
 def debug_db():
-    db = get_db()
+    db = get_conn()
     db.autocommit = True
     print("DB CONNECTED TO:", db.database)
     return db

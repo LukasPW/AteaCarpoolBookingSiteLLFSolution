@@ -3,6 +3,7 @@ from flask_cors import CORS
 from config import Config
 from routes.cars import cars_bp
 from routes.auth import auth_bp
+from routes.bookings import booking_bp
 
 def create_app():
     app = Flask(__name__)
@@ -11,6 +12,7 @@ def create_app():
     # register blueprints first
     app.register_blueprint(cars_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(booking_bp)
 
     # enable CORS for /api/* endpoints
     CORS(
