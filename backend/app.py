@@ -8,15 +8,18 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    CORS(
-        app,
-        resources={r"/api/*": {"origins": ["http://localhost", "http://localhost:80", "http://127.0.0.1", "http://127.0.0.1:80", "http://localhost:5000"]}},
-        supports_credentials=True,
-    )
-
+    # register blueprints first
     app.register_blueprint(cars_bp)
     app.register_blueprint(auth_bp)
 
+    # enable CORS for /api/* endpoints
+    CORS(
+        app,
+        resources={r"/api/*": {"origins": ["http://localhost", "http://127.0.0.1"]}},
+        supports_credentials=True,
+    )
+
+    # error handlers
     @app.errorhandler(404)
     def not_found(e):
         return jsonify({"error": "Not found"}), 404

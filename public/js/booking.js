@@ -85,7 +85,44 @@ function goBack() {
  * This function should be updated to send booking data to backend/database
  * before redirecting to index.php
  */
-function confirmBooking() {
-    alert('Booking confirmed! [Placeholder, database integration needed]');
-    window.location.href = 'index.php';
+async function confirmBooking() {
+    const selectedCar = JSON.parse(sessionStorage.getItem('selectedCar'));
+    const startDate = sessionStorage.getItem('selectedStartDate');
+    const endDate = sessionStorage.getItem('selectedEndDate');
+
+    if (!selectedCar || !startDate || !endDate) {
+        alert("Missing booking details.");
+        return;
+    }
+
+    const payload = {
+        car_id: selectedCar.id,
+        start_datetime: startDate.replace("T", " ") + ":00",
+        end_datetime: endDate.replace("T", " ") + ":00",
+        booked_by: localStorage.getItem("username") || "unknown"
+    };
+
+    try {
+        const res = await fetch("http://127.0.0.1:5000/api/bookings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        console.log("BOOKING RESPONSE:", data);
+
+        if (res.ok) {
+            alert("Booking saved.");
+            window.location.href = "index.php";
+        } else {
+            alert("Could not book: " + data.msg);
+        }
+    } catch (err) {
+        console.error("NETWORK ERR:", err);
+        alert("Network issue. Backend unreachable.");
+    }
 }
+
