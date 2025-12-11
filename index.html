@@ -6,6 +6,17 @@
     <link rel="icon" type="image/x-icon" href="public/favicon.ico">
     <link rel="stylesheet" href="public/style/style.css">
     <title>Home | Atea Car Booking</title>
+    <script>
+        // Simple client-side auth gate
+        (function() {
+            const name = sessionStorage.getItem('userName');
+            const email = sessionStorage.getItem('userEmail');
+            if (!name || !email) {
+                sessionStorage.setItem('postLoginRedirect', window.location.pathname + window.location.search);
+                window.location.href = 'login.html';
+            }
+        })();
+    </script>
 </head>
 <body>
     <header class="header">
@@ -39,6 +50,12 @@
             </div>
         </div>
     </div>
+
+    <div id="emptyState" class="empty-state">
+        <img src="public/empty.png" alt="">
+        <p>Select a start and end date to see available cars.</p>
+    </div>
+
 
     <div class="container">
         <!-- Filters Panel -->

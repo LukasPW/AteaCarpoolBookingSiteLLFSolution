@@ -29,6 +29,21 @@ function clearStoredUser() {
 }
 
 /**
+ * Require an authenticated user; otherwise redirect to login
+ * @returns {Object|null} user object if logged in, otherwise null after redirect
+ */
+function requireAuth() {
+    const user = getStoredUser();
+    if (!user) {
+        // remember where to return after login
+        sessionStorage.setItem('postLoginRedirect', window.location.pathname + window.location.search);
+        window.location.href = 'login.html';
+        return null;
+    }
+    return user;
+}
+
+/**
  * Initialize authentication UI state
  * Shows/hides login button vs user chip based on session state
  * NOTE: This function is currently unused since Python handles server-side auth

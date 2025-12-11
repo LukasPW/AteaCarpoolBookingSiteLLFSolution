@@ -27,24 +27,39 @@ function showModal(title, message, type = 'info', callback = null) {
     const overlay = document.getElementById('modalOverlay');
     const dialog = document.getElementById('modalDialog');
     const titleEl = document.getElementById('modalTitle');
-    const messageEl = document.getElementById('modalMessage');
+    const contentEl = document.getElementById('modalContent');
     const buttonEl = document.getElementById('modalButton');
+    const printBtn = document.getElementById('printButton');
 
-    if (!overlay || !dialog || !titleEl || !messageEl || !buttonEl) {
-        alert(message); // Fallback to alert if modal elements missing
+    if (!overlay || !dialog || !titleEl || !contentEl || !buttonEl) {
+        alert(typeof message === 'string' ? message : 'Booking confirmed');
         return;
     }
 
     titleEl.textContent = title;
-    messageEl.textContent = message;
 
-    // Remove all type classes and add the appropriate one
+    // Detect special case: booking confirmation summary
+    const isBookingSummary =
+        type === 'success' &&
+        title.toLowerCase().includes('booking');
+
+    if (typeof message === 'string' && !isBookingSummary) {
+        // Simple text message, no print button
+        contentEl.innerHTML = `<p class="modal-message">${message}</p>`;
+        if (printBtn) {
+            printBtn.classList.add('hidden');
+        }
+    } else {
+        // Detailed content (like booking summary) → allow printing
+        contentEl.innerHTML = message;
+        if (printBtn) {
+            printBtn.classList.remove('hidden');
+        }
+    }
+
     dialog.className = 'modal-dialog ' + type;
     buttonEl.className = 'modal-button' + (type === 'error' ? ' danger' : '');
-
-    // Store callback for when modal is closed
     window.modalCallback = callback;
-
     overlay.classList.add('show');
 }
 
@@ -74,6 +89,8 @@ function closeModal() {
  *  5. Format and display dates
  */
 document.addEventListener('DOMContentLoaded', () => {
+    const user = requireAuth();
+    if (!user) return;
     initUserMenu();
     // Get car and dates from sessionStorage
     const selectedCar = JSON.parse(sessionStorage.getItem('selectedCar'));
@@ -163,15 +180,127 @@ async function confirmBooking() {
             return;
         }
 
+        // Create and show booking summary
+        const summaryHtml = createBookingSummary(
+            selectedCar,
+            startDate,
+            endDate,
+            sessionStorage.getItem('userName') || 'User',
+            data.id
+        );
+        
         // Clear selected booking after success
         sessionStorage.removeItem('selectedCar');
         sessionStorage.removeItem('selectedStartDate');
         sessionStorage.removeItem('selectedEndDate');
         
-        showModal('Success', 'Booking confirmed!', 'success', () => {
+        showModal('Booking Confirmed', summaryHtml, 'success', () => {
             window.location.href = 'index.html';
         });
     } catch (err) {
         showModal('Error', 'Network error. Please try again.', 'error');
     }
+}
+/**
+ * Print booking summary to PDF
+ * Uses the browser's print dialog to save as PDF
+ */
+function createBookingSummary(car, startDate, endDate, userName, bookingId) {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const durationMs = end - start;
+    const durationHours = Math.round(durationMs / (1000 * 60 * 60) * 10) / 10;
+    const durationDays = Math.floor(durationHours / 24);
+    const remainingHours = Math.round((durationHours % 24) * 10) / 10;
+
+    const formatDate = (date) => {
+        return date.toLocaleDateString('en-GB', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    return `
+        <div class="booking-summary">
+            <header class="booking-summary-header">
+                <div class="summary-logo-title">
+                    <img src="public/atea-logo.generated.svg" alt="Atea" class="summary-logo">
+                    <div>
+                        <h1 class="summary-main-title">Car Booking Confirmation</h1>
+                        <p class="summary-subtitle">Atea Car Booking System</p>
+                    </div>
+                </div>
+                <div class="summary-meta">
+                    <div class="summary-row">
+                        <span class="summary-label">Confirmation #</span>
+                        <span class="summary-value">#${bookingId}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Generated</span>
+                        <span class="summary-value">${formatDate(new Date())}</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="summary-section summary-two-column">
+                <div class="summary-block">
+                    <h2 class="summary-section-title">Vehicle</h2>
+                    <div class="summary-row">
+                        <span class="summary-label">Car</span>
+                        <span class="summary-value">${car.make} ${car.model}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">License plate</span>
+                        <span class="summary-value">${car.license_plate}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Seats</span>
+                        <span class="summary-value">${car.seats}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Fuel type</span>
+                        <span class="summary-value">${car.fuel_type}</span>
+                    </div>
+                </div>
+
+                <div class="summary-block">
+                    <h2 class="summary-section-title">Renter</h2>
+                    <div class="summary-row">
+                        <span class="summary-label">Name</span>
+                        <span class="summary-value">${userName}</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="summary-section">
+                <h2 class="summary-section-title">Rental period</h2>
+                <div class="summary-row">
+                    <span class="summary-label">Pickup</span>
+                    <span class="summary-value">${formatDate(start)}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Return</span>
+                    <span class="summary-value">${formatDate(end)}</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Duration</span>
+                    <span class="summary-value">
+                        ${durationDays > 0 ? `${durationDays} day(s) ` : ''}${remainingHours} hour(s)
+                    </span>
+                </div>
+            </section>
+        </div>
+    `;
+}
+
+/**
+ * Print booking summary to PDF
+ * Uses the browser's print dialog to save as PDF
+ */
+function printBookingSummary() {
+    window.print();
 }

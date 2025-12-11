@@ -62,9 +62,12 @@ function checkDatesAndShowCars() {
     const endTime = document.getElementById('endTime');
     const carsGrid = document.getElementById('carsGrid');
     const filtersPanel = document.querySelector('.filters-panel');
+    const emptyState = document.getElementById('emptyState');
     
     if (!startTime.value || !endTime.value) {
-        carsGrid.innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">Please select start and end dates to see available cars</p>';
+        // Show friendly empty state when no dates are chosen
+        if (emptyState) emptyState.style.display = 'block';
+        carsGrid.innerHTML = '';
         filtersPanel.style.display = 'none';
         return false;
     }
@@ -77,6 +80,9 @@ function checkDatesAndShowCars() {
         filtersPanel.style.display = 'none';
         return false;
     }
+
+    // Hide empty state once dates are valid
+    if (emptyState) emptyState.style.display = 'none';
     
     // Update URL with dates
     const brandFilter = Array.from(document.querySelectorAll('#brandDropdown input[type="checkbox"]:checked')).map(cb => cb.value);
@@ -101,6 +107,8 @@ document.getElementById('endTime').addEventListener('change', checkDatesAndShowC
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    const user = requireAuth();
+    if (!user) return;
     loadCars();
     initUserMenu();
 });

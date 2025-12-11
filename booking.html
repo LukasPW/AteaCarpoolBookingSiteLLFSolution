@@ -7,6 +7,17 @@
     <link rel="stylesheet" href="public/style/style.css">
     <link rel="stylesheet" href="public/style/booking.css">
     <title>Book Car | Atea Car Booking</title>
+    <script>
+        // Simple client-side auth gate
+        (function() {
+            const name = sessionStorage.getItem('userName');
+            const email = sessionStorage.getItem('userEmail');
+            if (!name || !email) {
+                sessionStorage.setItem('postLoginRedirect', window.location.pathname + window.location.search);
+                window.location.href = 'login.html';
+            }
+        })();
+    </script>
 </head>
 <body>
 
@@ -28,8 +39,13 @@
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-dialog" id="modalDialog">
             <h2 class="modal-title" id="modalTitle">Message</h2>
-            <p class="modal-message" id="modalMessage">This is a modal message</p>
-            <button class="modal-button" id="modalButton" onclick="closeModal()">OK</button>
+            <div id="modalContent">
+                <p class="modal-message" id="modalMessage">This is a modal message</p>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-button" id="modalButton" onclick="closeModal()">OK</button>
+                <button class="modal-button hidden" id="printButton" onclick="printBookingSummary()">Print/PDF</button>
+            </div>
         </div>
     </div>
 
