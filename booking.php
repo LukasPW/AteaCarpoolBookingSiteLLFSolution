@@ -1,12 +1,3 @@
-<?php
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
-    exit;
-}
-$userName = htmlspecialchars($_SESSION['user_name'] ?? 'User');
-$userEmail = htmlspecialchars($_SESSION['user_email'] ?? '');
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +15,7 @@ $userEmail = htmlspecialchars($_SESSION['user_email'] ?? '');
         <img class="logo" src="public/atea-logo.generated.svg" alt="Atea">
         <div class="header-right">
             <button class="user-pill" id="userMenuToggle" aria-haspopup="true" aria-expanded="false">
-                <span class="user-name"><?php echo $userName; ?></span>
+                <span class="user-name">User</span>
                 <img src="public/UserIcon.png" alt="User" class="user-avatar">
             </button>
             <div class="user-menu" id="userMenu" hidden>

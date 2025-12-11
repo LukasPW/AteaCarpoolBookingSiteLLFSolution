@@ -1,10 +1,3 @@
-<?php
-session_start();
-if (isset($_SESSION['user_id'])) {
-    header('Location: index.php');
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,9 +50,10 @@ if (isset($_SESSION['user_id'])) {
         errorBox.style.display = 'none';
         errorBox.textContent = '';
         try {
-            const res = await fetch('api/login.php', {
+            const res = await fetch('http://localhost:5000/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify({ email, password })
             });
             const data = await res.json().catch(() => ({}));
@@ -68,6 +62,8 @@ if (isset($_SESSION['user_id'])) {
                 errorBox.style.display = 'block';
                 return;
             }
+            if (data.name) sessionStorage.setItem('userName', data.name);
+            if (data.email) sessionStorage.setItem('userEmail', data.email);
             window.location.href = 'index.php';
         } catch (err) {
             errorBox.textContent = 'Network error. Please try again.';

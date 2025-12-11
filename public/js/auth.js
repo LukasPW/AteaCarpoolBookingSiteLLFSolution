@@ -85,6 +85,16 @@ function initUserMenu() {
     const logoutBtn = document.getElementById('logoutBtn');
     if (!toggle || !menu || !logoutBtn) return;
 
+    const API_BASE = window.API_BASE || 'http://localhost:5000/api';
+    const nameLabel = toggle.querySelector('.user-name');
+    const renderUser = () => {
+        const user = getStoredUser();
+        if (nameLabel) {
+            nameLabel.textContent = user?.name || 'User';
+        }
+    };
+    renderUser();
+
     const closeMenu = () => {
         menu.hidden = true;
         toggle.setAttribute('aria-expanded', 'false');
@@ -99,7 +109,7 @@ function initUserMenu() {
 
     logoutBtn.addEventListener('click', async () => {
         try {
-            await fetch('api/logout.php', { method: 'POST' });
+            await fetch(`${API_BASE}/logout`, { method: 'POST', credentials: 'include' });
         } catch (_) {
             // ignore network errors on logout
         }

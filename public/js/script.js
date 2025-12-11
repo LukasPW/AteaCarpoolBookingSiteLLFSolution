@@ -18,6 +18,7 @@
 let carsData = [];
 let selectedStartDate = null;
 let selectedEndDate = null;
+const API_BASE = 'http://localhost:5000/api';
 
 
 /**
@@ -27,7 +28,7 @@ let selectedEndDate = null;
  */
 async function loadCars() {
     try {
-        const response = await fetch('api/get_cars.php');
+        const response = await fetch(`${API_BASE}/cars`, { credentials: 'include' });
         if (!response.ok) throw new Error('Network response was not ok');
         carsData = await response.json();
         // Check if we need to restore state from URL
