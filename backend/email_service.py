@@ -89,7 +89,6 @@ def send_booking_confirmation(user_email, user_name, booking_id, car_info, start
     
     # If no SMTP credentials, return success (development mode)
     if not sender_password:
-        print(f"[EMAIL] Would send confirmation to {user_email} for booking #{booking_id}")
         return True, "Email disabled in development mode"
     
     try:
@@ -179,10 +178,8 @@ def send_booking_confirmation(user_email, user_name, booking_id, car_info, start
         server.login(sender_email, sender_password)
         server.send_message(msg)
         server.quit()
-        
-        print(f"[EMAIL] Confirmation sent to {user_email} for booking #{booking_id}")
+
         return True, "Email sent successfully"
-        
+
     except Exception as e:
-        print(f"[EMAIL ERROR] Failed to send to {user_email}: {str(e)}")
         return False, str(e)

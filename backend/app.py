@@ -1,22 +1,23 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 from config import Config
 from routes.cars import cars_bp
 from routes.auth import auth_bp
 from routes.bookings import booking_bp
-from dotenv import load_dotenv
+
 load_dotenv()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    # register blueprints first
+    # Register blueprints
     app.register_blueprint(cars_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(booking_bp)
 
-    # enable CORS for /api/* endpoints
+    # Enable CORS for /api/* endpoints
     CORS(
         app,
         resources={r"/api/*": {"origins": ["http://localhost", "http://127.0.0.1"]}},

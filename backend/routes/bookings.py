@@ -4,55 +4,42 @@ from email_service import send_booking_confirmation
 
 booking_bp = Blueprint("booking_bp", __name__, url_prefix="/api")
 
-def debug_db():
-    db = get_conn()
-    db.autocommit = True
-    print("DB CONNECTED TO:", db.database)
-    return db
 
-# GET all bookings
 @booking_bp.route("/bookings", methods=["GET"])
 def get_bookings():
-    db = debug_db()
-    cursor = db.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM bookings")
-    data = cursor.fetchall()
-    cursor.close()
-    db.close()
+    conn = get_conn()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM bookings")
+        data = cursor.fetchall()
+    finally:
+        conn.close()
     return jsonify(data)
 
-# CHECK overlap
 def has_overlap(car_id, start, end):
-    print("OVERLAP CHECK:", car_id, start, end)
-    db = debug_db()
-    cursor = db.cursor()
-    sql = """
-        SELECT COUNT(*)
-        FROM bookings
-        WHERE car_id = %s
-        AND start_datetime < %s
-        AND end_datetime > %s
-    """
-    cursor.execute(sql, (car_id, end, start))
-    (count,) = cursor.fetchone()
-    print("OVERLAP COUNT:", count)
-    cursor.close()
-    db.close()
-    return count > 0
+    """Check if a car is already booked during the given time period."""
+    conn = get_conn()
+    try:
+        cursor = conn.cursor()
+        sql = """
+            SELECT COUNT(*)
+            FROM bookings
+            WHERE car_id = %s
+            AND start_datetime < %s
+            AND end_datetime > %s
+        """
+        cursor.execute(sql, (car_id, end, start))
+        (count,) = cursor.fetchone()
+        return count > 0
+    finally:
+        conn.close()
 
 # POST create booking
-@booking_bp.route("/bookings", methods=["POST", "OPTIONS"])
+@booking_bp.route("/bookings", methods=["POST"])
 def create_booking():
-    if request.method == "OPTIONS":
-        # handle preflight for CORS
-        response = jsonify({})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Methods", "POST, OPTIONS")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        return response
-
-    data = request.json
-    print("INCOMING JSON:", data)
+    data = request.get_json()
+    if not data:
+        return jsonify({"msg": "Invalid JSON"}), 400
 
     car_id = data.get("car_id")
     start = data.get("start_datetime")
@@ -60,17 +47,13 @@ def create_booking():
     booked_by = data.get("booked_by")
 
     if not all([car_id, start, end, booked_by]):
-        print("MISSING FIELD ERROR")
-        return jsonify({"msg": "missing fields"}), 400
+        return jsonify({"msg": "Missing required fields"}), 400
 
     if has_overlap(car_id, start, end):
-        print("BLOCKED: CAR ALREADY BOOKED")
-        return jsonify({"msg": "car already booked in that time slot"}), 409
+        return jsonify({"msg": "Car is already booked for that time period"}), 409
 
-    db = debug_db()
-    cursor = db.cursor(dictionary=True)
-
-    # Nieuw: track of mail wel/niet gelukt is
+    conn = get_conn()
+    cursor = conn.cursor(dictionary=True)
     email_sent = False
 
     try:
@@ -78,17 +61,16 @@ def create_booking():
             "INSERT INTO bookings (car_id, start_datetime, end_datetime, booked_by) VALUES (%s, %s, %s, %s)",
             (car_id, start, end, booked_by)
         )
-        db.commit()
+        conn.commit()
         new_id = cursor.lastrowid
-        print("INSERTED BOOKING ID:", new_id)
-        
+
         # Get car details for email
         cursor.execute(
             "SELECT make, model, license_plate FROM cars WHERE id = %s",
             (car_id,)
         )
         car_data = cursor.fetchone()
-        
+
         # Get user info from session
         user_email = session.get("user_email")
         user_name = session.get("user_name") or booked_by
@@ -101,7 +83,7 @@ def create_booking():
                 "license_plate": car_data["license_plate"],
             }
 
-            success, msg = send_booking_confirmation(
+            success, _ = send_booking_confirmation(
                 user_email,
                 user_name,
                 new_id,
@@ -110,19 +92,13 @@ def create_booking():
                 end,
             )
             email_sent = bool(success)
-            print("[EMAIL RESULT]", success, msg)
-        else:
-            print("[EMAIL] Skipped – no user_email in session or no car_data")
-        
-    except Exception as e:
-        print("SQL ERROR:", e)
-        db.rollback()
-        cursor.close()
-        db.close()
-        return jsonify({"msg": "DB insert failed"}), 500
 
-    cursor.close()
-    db.close()
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"msg": f"DB insert failed: {str(e)}"}), 500
+
+    finally:
+        conn.close()
 
     return jsonify({
         "msg": "booking created",
