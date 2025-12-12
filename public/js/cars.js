@@ -104,7 +104,7 @@ function renderCars(cars = carsData) {
         const carCard = document.createElement('div');
         carCard.className = `car-card ${isAvailable ? 'available' : 'unavailable'}`;
         
-        const fuelIcon = FUEL_ICONS[car.fuel_type] || 'public/GasolineCar.png';
+        const fuelIcon = FUEL_ICONS[car.fuel_type] || 'public/icons/GasolineCar.png';
         const fuelCode = FUEL_MAP[car.fuel_type] || car.fuel_type.charAt(0);
         
         // Get booking info for the selected dates
@@ -124,7 +124,7 @@ function renderCars(cars = carsData) {
                     <div class="car-year">${car.year}</div>
                     <div class="car-specs">
                         <span class="car-spec">
-                            <img src="public/CarSeat.png" alt="Seats" class="car-spec-icon">
+                            <img src="public/icons/CarSeat.png" alt="Seats" class="car-spec-icon">
                             ${car.seats}
                         </span>
                         <span class="car-spec">

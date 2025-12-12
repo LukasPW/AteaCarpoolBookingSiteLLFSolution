@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('carSeats').textContent = selectedCar.seats;
 
     // Populate fuel type
-    const fuelIcon = FUEL_ICONS[selectedCar.fuel_type] || 'public/GasolineCar.png';
+    const fuelIcon = FUEL_ICONS[selectedCar.fuel_type] || 'public/icons/GasolineCar.png';
     const fuelCode = FUEL_MAP[selectedCar.fuel_type] || selectedCar.fuel_type.charAt(0);
     document.getElementById('fuelIcon').src = fuelIcon;
     document.getElementById('fuelCode').textContent = fuelCode;
@@ -149,6 +149,16 @@ async function confirmBooking() {
     if (!selectedCar || !startDate || !endDate) {
         showModal('Error', 'No car selected. Please go back and select a car.', 'error');
         return;
+    }
+
+    // Show loading overlay
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const bookBtn = document.querySelector('.book-btn');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('show');
+    }
+    if (bookBtn) {
+        bookBtn.disabled = true;
     }
 
     // Normalize to "YYYY-MM-DD HH:MM:SS" for the API
@@ -193,9 +203,15 @@ async function confirmBooking() {
         }
 
         if (!res.ok) {
+            if (loadingOverlay) loadingOverlay.classList.remove('show');
+            if (bookBtn) bookBtn.disabled = false;
             showModal('Booking Failed', data.msg || 'Unable to complete the booking.', 'error');
             return;
         }
+
+        // Hide loading overlay
+        if (loadingOverlay) loadingOverlay.classList.remove('show');
+        if (bookBtn) bookBtn.disabled = false;
 
         // Create and show booking summary
         const summaryHtml = createBookingSummary(
@@ -216,6 +232,8 @@ async function confirmBooking() {
             window.location.href = 'index.html';
         });
     } catch (err) {
+        if (loadingOverlay) loadingOverlay.classList.remove('show');
+        if (bookBtn) bookBtn.disabled = false;
         showModal('Error', 'Network error. Please try again.', 'error');
     }
 }

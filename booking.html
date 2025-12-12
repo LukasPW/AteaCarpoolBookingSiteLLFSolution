@@ -27,13 +27,19 @@
         <div class="header-right">
             <button class="user-pill" id="userMenuToggle" aria-haspopup="true" aria-expanded="false">
                 <span class="user-name">User</span>
-                <img src="public/UserIcon.png" alt="User" class="user-avatar">
+                <img src="public/icons/UserIcon.png" alt="User" class="user-avatar">
             </button>
             <div class="user-menu" id="userMenu" hidden>
                 <button id="logoutBtn" class="logout-item">Logout</button>
             </div>
         </div>
     </header>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Processing your booking...</p>
+    </div>
 
     <!-- MODAL POPUP -->
     <div class="modal-overlay" id="modalOverlay">
@@ -62,7 +68,7 @@
                 <h2><span class="brand" id="carBrand"></span> <span id="carModel"></span> <span class="plate" id="carPlate"></span></h2>
 
                 <div class="car-icons">
-                    <div class="info-item"><img class="car-spec-icon" src="public/CarSeat.png" alt="Seats"> <span id="carSeats"></span></div>
+                    <div class="info-item"><img class="car-spec-icon" src="public/icons/CarSeat.png" alt="Seats"> <span id="carSeats"></span></div>
                     <div class="info-item"><img class="car-spec-icon" id="fuelIcon" src="" alt="Fuel"> <span id="fuelCode"></span></div>
                 </div>
 

@@ -13,10 +13,10 @@
  * Used for displaying fuel type icons on car cards
  */
 const FUEL_ICONS = {
-    'Electric': 'public/ElectricCar.png',
-    'Hybrid': 'public/HybridCar.png',
-    'Gasoline': 'public/GasolineCar.png',
-    'Diesel': 'public/GasolineCar.png'
+    'Electric': 'public/icons/ElectricCar.png',
+    'Hybrid': 'public/icons/HybridCar.png',
+    'Gasoline': 'public/icons/GasolineCar.png',
+    'Diesel': 'public/icons/GasolineCar.png'
 };
 
 /**
