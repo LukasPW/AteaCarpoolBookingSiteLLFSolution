@@ -43,7 +43,6 @@ async function loadCars() {
             setTimeout(() => restoreFiltersFromUrl(urlParams), 100);
         }
     } catch (error) {
-        console.error('Error loading cars:', error);
         document.getElementById('carsGrid').innerHTML = '<p style="color: #e74c3c; text-align: center; padding: 40px;">Error loading cars data</p>';
     }
 }

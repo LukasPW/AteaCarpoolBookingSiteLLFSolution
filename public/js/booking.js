@@ -92,6 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = requireAuth();
     if (!user) return;
     initUserMenu();
+    // Bind UI event listeners
+    const modalBtn = document.getElementById('modalButton');
+    const printBtn = document.getElementById('printButton');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const bookBtn = document.getElementById('bookBtn');
+    if (modalBtn) modalBtn.addEventListener('click', closeModal);
+    if (printBtn) printBtn.addEventListener('click', printBookingSummary);
+    if (cancelBtn) cancelBtn.addEventListener('click', goBack);
+    if (bookBtn) bookBtn.addEventListener('click', confirmBooking);
     // Get car and dates from sessionStorage
     const selectedCar = JSON.parse(sessionStorage.getItem('selectedCar'));
     const startDate = sessionStorage.getItem('selectedStartDate');
